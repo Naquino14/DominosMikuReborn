@@ -1,0 +1,46 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\CSharp Projects\\DominosMikuReborn\\Code Dump\\MikuApp\\Assembly-CSharp-firstpass\\Assembly-CSharp-firstpass.csproj": {}
+  },
+  "projects": {
+    "D:\\CSharp Projects\\DominosMikuReborn\\Code Dump\\MikuApp\\Assembly-CSharp-firstpass\\Assembly-CSharp-firstpass.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\CSharp Projects\\DominosMikuReborn\\Code Dump\\MikuApp\\Assembly-CSharp-firstpass\\Assembly-CSharp-firstpass.csproj",
+        "projectName": "Assembly-CSharp-firstpass",
+        "projectPath": "D:\\CSharp Projects\\DominosMikuReborn\\Code Dump\\MikuApp\\Assembly-CSharp-firstpass\\Assembly-CSharp-firstpass.csproj",
+        "packagesPath": "C:\\Users\\naqui\\.nuget\\packages\\",
+        "outputPath": "D:\\CSharp Projects\\DominosMikuReborn\\Code Dump\\MikuApp\\Assembly-CSharp-firstpass\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\naqui\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net20"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://www.myget.org/F/discord-net/api/v3/index.json": {}
+        },
+        "frameworks": {
+          "net20": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net20": {
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
