@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C3C5D58F-C1E5-4A44-92F7-25C7924CD265}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LitJson</RootNamespace>
+    <AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoStdLib>true</NoStdLib>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArrayMetadata.cs" />
+    <Compile Include="Condition.cs" />
+    <Compile Include="CubeRotator.cs" />
+    <Compile Include="EtceteraBinding.cs" />
+    <Compile Include="EtceteraEventListener.cs" />
+    <Compile Include="EtceteraGUIManager.cs" />
+    <Compile Include="EtceteraGUIManagerThree.cs" />
+    <Compile Include="EtceteraGUIManagerTwo.cs" />
+    <Compile Include="EtceteraManager.cs" />
+    <Compile Include="ExporterFunc.2.cs" />
+    <Compile Include="ExporterFunc.cs" />
+    <Compile Include="Facebook.cs" />
+    <Compile Include="FacebookBatchRequest.cs" />
+    <Compile Include="FacebookBinding.cs" />
+    <Compile Include="FacebookEventListener.cs" />
+    <Compile Include="FacebookGUIManager.cs" />
+    <Compile Include="FacebookManager.cs" />
+    <Compile Include="FacebookSessionDefaultAudience.cs" />
+    <Compile Include="FacebookSessionLoginBehavior.cs" />
+    <Compile Include="FsmContext.cs" />
+    <Compile Include="IJsonWrapper.cs" />
+    <Compile Include="ImporterFunc.2.cs" />
+    <Compile Include="ImporterFunc.cs" />
+    <Compile Include="ISysFontTexturable.cs" />
+    <Compile Include="JsonData.cs" />
+    <Compile Include="JsonException.cs" />
+    <Compile Include="JsonMapper.cs" />
+    <Compile Include="JsonReader.cs" />
+    <Compile Include="JsonToken.cs" />
+    <Compile Include="JsonType.cs" />
+    <Compile Include="JsonWriter.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="ObjectMetadata.cs" />
+    <Compile Include="OrderedDictionaryEnumerator.cs" />
+    <Compile Include="P31RemoteNotificationType.cs" />
+    <Compile Include="ParserToken.cs" />
+    <Compile Include="PhotoPromptType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyMetadata.cs" />
+    <Compile Include="SharingBinding.cs" />
+    <Compile Include="SharingGUIManager.cs" />
+    <Compile Include="SharingManager.cs" />
+    <Compile Include="SysFont.cs" />
+    <Compile Include="SysFontText.cs" />
+    <Compile Include="SysFontTexture.cs" />
+    <Compile Include="TwitterBinding.cs" />
+    <Compile Include="TwitterEventListener.cs" />
+    <Compile Include="TwitterGUIManager.cs" />
+    <Compile Include="TwitterManager.cs" />
+    <Compile Include="UIInterfaceOrientation.cs" />
+    <Compile Include="WrapperFactory.cs" />
+    <Compile Include="WriterContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mscorlib\mscorlib.csproj">
+      <Project>{c3c5d58f-c1e5-4a44-92f7-25c7924cd267}</Project>
+      <Name>mscorlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\P31RestKit\P31RestKit.csproj">
+      <Project>{c3c5d58f-c1e5-4a44-92f7-25c7924cd268}</Project>
+      <Name>P31RestKit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.Core\System.Core.csproj">
+      <Project>{c3c5d58f-c1e5-4a44-92f7-25c7924cd269}</Project>
+      <Name>System.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System.csproj">
+      <Project>{c3c5d58f-c1e5-4a44-92f7-25c7924cd26a}</Project>
+      <Name>System</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnityEngine\UnityEngine.csproj">
+      <Project>{c3c5d58f-c1e5-4a44-92f7-25c7924cd26b}</Project>
+      <Name>UnityEngine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
