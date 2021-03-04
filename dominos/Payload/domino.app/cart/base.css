@@ -1,0 +1,290 @@
+body { 
+margin: 0;
+padding: 0; 
+background:url(img/background.png) repeat-y #ddfbf9;
+font-size:12pt;
+line-height:12pt;
+font-family:"ヒラギノ角ゴ Pro W6", sans-serif;
+color:#444;
+background-size: 320px auto;
+}
+
+a {
+text-decoration: none;
+color: #444;
+}
+
+
+img {
+border:0;
+}
+
+.blue {
+color:#0099b6;
+}
+
+.gray {
+color:#666;
+}
+
+.float_r {
+float:right;
+}
+
+.float_l {
+float:left;
+}
+
+.clear {
+clear:both;
+}
+
+table {
+font-size: 12px;
+font-weight: bold;
+}
+
+td {
+padding: 3px;
+border-top:1px solid #80cdd5;
+}
+
+td.head {
+color: #066aa8;
+width: 35%;
+}
+
+.caption {
+color: #444;
+}
+
+.price {
+border: 1px solid #80cdd5;
+border-left: none;
+border-right: none;
+color: #951069;
+font-weight: bold;
+}
+
+#cart {
+width: 320px;
+padding-bottom: 30px;
+}
+
+#recommendMenu {
+width:320px;
+}
+
+.photo {
+margin:8px 0 0 14px;
+padding:3px 0 0 3px;
+width:80px;
+height:60px;
+background:url(img/cart_item_bg.png) no-repeat;
+}
+
+.half_icon {
+    margin: 0px 0 0 16px;
+}
+
+.itemTitle, .itemTitle2 {
+background: url(img/title_bg.png) no-repeat #0062a3;
+padding: 3px;
+font-weight: bold;
+}
+
+.itemTitle img.float_l {
+    position: relative;
+    bottom: 10px;
+}
+
+.itemTitle p {
+margin: 10px;
+padding: 3px;
+color: #fff;
+}
+
+.itemTitle img {
+margin: 10px;
+}
+
+.itemTitle2 img {
+margin: 2px 16px 0 7px;
+}
+
+.itemTitle2 p {
+margin-top: 10px;
+}
+
+.favorite {
+margin:6px 0 20px 10px;
+padding:3px 0 0 3px;
+width:80px;
+}
+
+.itemImage {
+float:left;
+clear:left;
+}
+
+.itemInfo {
+margin-left: 105px;
+}
+
+.itemInfo>p {
+    font-weight: bold;
+}
+
+.itemInfo .itemInfo p, .itemInfo table {
+    padding-right: 10px;
+}
+
+.itemInfo .item_name {
+    padding: 0;
+    background-image: url(img/root_tel-1.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: 50%;
+}
+
+.itemInfo .item_name a {
+    display: block;
+    padding-right: 10px;
+}
+
+.itemInfo .item_name_link {
+    padding: 0;
+    background-image: url(img/root_tel-1.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: 50%;
+}
+
+.itemInfo .item_name_link a {
+    padding-right: 10px;
+}
+
+.delivery_address {
+font-size: 16px;
+margin:8px 8px 14px 8px;
+}
+
+.monetary_amount {
+margin:5px 5px 5px 5px;
+}
+.monetary_tax {
+margin:0px 5px 5px 5px;
+}
+
+.cart_alert {
+    margin: 0 0 5px;
+    text-align: center;
+}
+
+.payment_type_link {
+	margin:20px 5px 40px 5px;
+    background-image: url(img/root_tel-1.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: 50%;
+}
+
+.payment_type {
+	margin:20px 5px 40px 5px;
+}
+
+.payment_type_credit_link {
+	margin:20px 5px 10px 5px;
+    background-image: url(img/root_tel-1.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: 50%;
+}
+
+.payment_type_credit {
+	margin:20px 5px 10px 5px;
+}
+
+.payment_type_space {
+	content: ".";
+	margin:0px 5px 30px 5px;
+}
+
+
+
+.btn {
+margin:5px 9px 5px 9px;
+text-align: center;
+}
+
+.btn2 {
+margin:5px 9px 20px 9px;
+text-align: center;
+}
+
+table {
+margin-bottom: 20px;
+}
+
+.tag {
+margin-top: -20px;
+margin-left:10px;
+}
+
+
+dt {
+font-weight: bold;
+}
+
+dl {
+margin: 10px 20px 0 0;
+padding: 0;
+}
+
+
+dd {
+margin:5px 0 0 0;
+padding:0;
+font-size: 12px;
+}
+
+.nextbtn {
+margin: -50px 5px 0 5px;
+position: relative;
+top: 2px;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	clear: both;
+}
+
+
+#confirm {
+text-align: right;
+margin: 10px 10px 0 0 ;
+}
+
+ul,li {
+font-size: 12px;
+line-height: 3em;
+list-style-type: none;
+text-decoration: none;
+}
+
+#zero_notice {
+    width: 320px;
+    padding-top: 50px;
+}
+
+#zero_notice p {
+    text-align: center;
+    font-weight: bold;
+}
+
+#zero_notice .button {
+    padding-top: 20px;
+}

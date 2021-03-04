@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>domino</title>
+<link rel="stylesheet" href="base.css" type="text/css">
+<script language="JavaScript" type="text/javascript">
+var LEFT_PIZZA  = 0;
+var RIGHT_PIZZA = 1;
+
+function OnLoad()
+{
+    document.documentElement.style.webkitTouchCallout = "none";
+    document.documentElement.style.webkitUserSelect = "none";
+    switchDisply(RIGHT_PIZZA);
+    $changeDisplay
+    location.hash = "rendered";
+
+    document.getElementById("photopizzaS1").addEventListener('touchstart', function (e)
+    {
+        switchDisply(LEFT_PIZZA);
+    });
+
+    document.getElementById("photopizzaS2").addEventListener('touchstart', function (e)
+    {
+        switchDisply(RIGHT_PIZZA);
+    });
+}
+
+function switchDisply(target)
+{
+    var type = '';
+    switch (target)
+    {
+        case LEFT_PIZZA:
+            type = ' left';
+            closeRight();
+        break;
+        case RIGHT_PIZZA:
+            type = ' right';
+            closeLeft();
+        break;
+    }
+    document.getElementById("SelectPizza").className = 'select-pizza ' + type;
+}
+
+function closeLeft()
+{
+    document.getElementById("LeftPizza").className = 'hide';
+    document.getElementById("RightPizza").className = '';
+}
+
+function closeRight()
+{
+    document.getElementById("LeftPizza").className = '';
+    document.getElementById("RightPizza").className = 'hide';
+}
+
+</script>
+</head>
+<body onload="OnLoad()"/>
+
+<div class="container">
+<div class="select-pizza left" id="SelectPizza">
+    <table class="half-half">
+        <tr>
+        <td class="left-pizza">
+            <p><img src="img/half_pizza_select.png"></p>
+            <div class="image" id="photopizzaS1"><img src="$photopizzaS1" alt=""></div>
+            <div class="name">$namepizza1</div>
+        </td>
+        <td class="right-pizza">
+            <p><img src="img/half_pizza_select.png"></p>
+            <div class="image" id="photopizzaS2"><img src="$photopizzaS2" alt=""></div>
+            <div class="name">$namepizza2</div>
+        </td>
+        </tr>
+    </table>
+
+    <div class="current-pizza"></div>
+    <div class="half-icon"></div>
+    <div class="arrow" id="arrow"><img src="img/arrow.png" alt=""></div>
+<!-- /.select-pizza --></div>
+
+<div id="LeftPizza">
+    <div class="item-frame">
+        <div class="pizza-image" id="photopizzaL1"><img src="$photopizzaL1" alt=""></div>
+    <!-- /.item-frame --></div>
+
+    <div class="item-name">$namepizza1</div>
+
+    <div class="item-frame">
+        <div class="title"><img src="img/menu_tag_info.png" alt="Information"></div>
+        <div class="item-inner">
+            <div class="comment">$commentpizza1</div>
+            <div class="menu-list">
+                <div class="item">
+                    <div class="head">ソース</div>
+                    <div class="data">$saucepizza1</div>
+                </div>
+                <div class="item">
+                    <div class="head">トッピング</div>
+                    <div class="data">$toppingpizza1</div>
+                </div>
+            <!-- /.menu-list --></div>
+            <div class="button">
+                <a href="dominospizza:function:cancelHalfAndHalf"><img src="img/menu_button_cancel.png" alt="ハーフ＆ハーフをやめる"></a>
+            </div>
+        <!-- /.item-inner --></div>
+    <!-- /.item-frame --></div>
+
+    <div class="price">
+        <span>$pricepizza1</span>
+    </div>
+
+    <div class="item-frame">
+        <div class="title"><img src="img/menu_tag_option.png" alt="Option"></div>
+        <div class="item-inner">
+            <div class="menu-list">
+                <div class="item link">
+                    <a href="dominospizza:function:selectSize">
+                        <span class="head">サイズをえらぶ</span>
+                        <span class="data" id="size1">$size</span>
+                    </a>
+                </div>
+                <div class="item link">
+                    <a href="dominospizza:function:selectCrust">
+                        <span class="head">生地をえらぶ</span>
+                        <span class="data" id="crust1">$crust</span>
+                    </a>
+                </div>
+
+                $html_fragment_for_topping1
+                $html_fragment_for_onepiece1
+
+                <div class="item link">
+                    <a href="dominospizza:function:selectPieces">
+                        <span class="head">個数をえらぶ</span>
+                        <span class="data" id="count1">$count</span>
+                    </a>
+                </div>
+            <!-- /.menu-list --></div>
+        <!-- /.item-inner --></div>
+    <!-- /.item-frame --></div>
+
+    <div class="button">
+        <a href="dominospizza:function:addToCart"><img src="img/menu_button_cart.png" alt="カートに入れる"></a>
+    </div>
+<!-- /#LeftPizza --></div>
+
+<div id="RightPizza" class="hide">
+    <div class="item-frame">
+        <div class="pizza-image" id="photopizzaL2"><img src="$photopizzaL2" alt=""></div>
+    <!-- /.item-frame --></div>
+
+    <div class="item-name">$namepizza2</div>
+
+    <div class="item-frame">
+        <div class="title"><img src="img/menu_tag_info.png" alt="Information"></div>
+        <div class="item-inner">
+            <div class="comment">$commentpizza2</div>
+            <div class="menu-list">
+                <div class="item">
+                    <div class="head">ソース</div>
+                    <div class="data">$saucepizza2</div>
+                </div>
+                <div class="item">
+                    <div class="head">トッピング</div>
+                    <div class="data">$toppingpizza2</div>
+                </div>
+                <div class="item link">
+                    <a href="dominospizza:function:reselect">もう一度選び直す</a>
+                </div>
+            <!-- /.menu-list --></div>
+            <div class="button">
+                <a href="dominospizza:function:cancelHalfAndHalf"><img src="img/menu_button_cancel.png" alt="ハーフ＆ハーフをやめる"></a>
+            </div>
+        <!-- /.item-inner --></div>
+    <!-- /.item-frame --></div>
+
+    <div class="price">
+        <span>$pricepizza2</span>
+    </div>
+
+    <div class="item-frame">
+        <div class="title"><img src="img/menu_tag_option.png" alt="Option"></div>
+        <div class="item-inner">
+            <div class="menu-list">
+                <div class="item link">
+                    <a href="dominospizza:function:selectSize">
+                        <span class="head">サイズをえらぶ</span>
+                        <span class="data" id="size2">$size</span>
+                    </a>
+                </div>
+                <div class="item link">
+                    <a href="dominospizza:function:selectCrust">
+                        <span class="head">生地をえらぶ</span>
+                        <span class="data" id="crust2">$crust</span>
+                    </a>
+                </div>
+
+                $html_fragment_for_topping2
+                $html_fragment_for_onepiece2
+
+                <div class="item link">
+                    <a href="dominospizza:function:selectPieces">
+                        <span class="head">個数をえらぶ</span>
+                        <span class="data" id="count2">$count</span>
+                    </a>
+                </div>
+            <!-- /.menu-list --></div>
+        <!-- /.item-inner --></div>
+    <!-- /.item-frame --></div>
+
+    <div class="button">
+        <a href="dominospizza:function:addToCart"><img src="img/menu_button_cart.png" alt="カートに入れる"></a>
+    </div>
+<!-- /#RightPizza --></div>
+
+<div class="taketime">
+    <img src="img/taketime.png" width="254" height="15" />
+</div>
+
+<!-- /.container --></div>
+</body>
+</html>

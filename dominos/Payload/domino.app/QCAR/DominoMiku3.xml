@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget size="100 100" name="Cover_7_Bot" />
+    <ImageTarget size="100 100" name="Cover_7_Top" />
+    <ImageTarget size="100 100" name="Cover_6_Bot" />
+    <ImageTarget size="100 100" name="Cover_6_Top" />
+    <ImageTarget size="100 100" name="Cover_5_Top" />
+    <ImageTarget size="100 94.599998" name="Cover_4_Top" />
+    <ImageTarget size="100 100" name="Cover_3_Top" />
+    <ImageTarget size="100 100" name="Cover_3_Bot" />
+    <ImageTarget size="100 100" name="Cover_2_Top" />
+    <ImageTarget size="100 100" name="Cover_2_Bot" />
+    <ImageTarget size="100 100" name="Cover_1_Top" />
+    <ImageTarget size="100 100" name="Cover_1_Bot" />
+  </Tracking>
+</QCARConfig>

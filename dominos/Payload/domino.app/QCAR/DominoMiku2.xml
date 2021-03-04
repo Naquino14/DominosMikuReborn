@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+    <Tracking>
+        <ImageTarget size="100.194366 100" name="Cover_3_Top"/>
+        <ImageTarget size="98.839455 100" name="Cover_3_Bot"/>
+        <ImageTarget size="101.309708 100" name="Cover_2_Bot"/>
+        <ImageTarget size="99.517685 100" name="Cover_2_Top"/>
+        <ImageTarget size="100.548698 100" name="Cover_1_Top"/>
+        <ImageTarget size="99.723564 100" name="Cover_1_Bot"/>
+        <ImageTarget size="100 94.599998" name="Cover_4_Top"/>
+    </Tracking>
+</QCARConfig>

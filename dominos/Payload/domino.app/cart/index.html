@@ -1,0 +1,1278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>domino</title>
+<link rel="stylesheet" href="{{bundlepath}}/cart/base.css" type="text/css">
+<script type="text/javascript" src="{{bundlepath}}/cart/jquery.js"></script>
+</head>
+
+<body>
+
+<div id="cart">
+</div>
+
+<div id="zero_notice" style="display:none">
+    <p><img src="{{bundlepath}}/cart/img/cart_empty2.png" width="83" height="79"></p>
+    <p>現在ご注文はありません</p>
+    <p class="button"><a href="menu#menu"><img src="{{bundlepath}}/cart/img/button_add.png" width="281" height="46"></a></p>
+ </div>
+
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+   document.documentElement.style.webkitTouchCallout = "none";
+    document.documentElement.style.webkitUserSelect = "none";
+});
+
+var items = {{json}};
+
+var mode = items["mode"] || "index";
+var cart = $("#cart");
+var priceAndTax = items["priceAndTax"];
+var service_get_uri = items["service_get_uri"];
+
+// > ADD v3.10
+var creditInfo = items["creditInfo"] ? items["creditInfo"] : null;
+// < ADD v3.10
+
+function item_header(header_info) {
+    var header =
+        $("<div>").addClass("itemTitle").append(
+            $("<img>").addClass("float_l")
+                      .attr("alt", header_info["title"])
+                      .attr("width", "45")
+                      .attr("height", "45")
+                      .attr("src", header_info["img"]).after(
+            $("<p>").text(header_info["title"]))
+        );
+
+    return header;
+}
+
+function item_content(items) {
+    var content = $("<div>");
+	
+	content.append($("<p>").text(items));
+
+    for (var i in items) {
+        var item = items[i];
+        var half;
+		var isOnepiece = true;
+
+        if (item instanceof Array) {
+            half = item[1];
+            item = item[0];
+        }
+
+        var div = $("<div>").attr("id", "item_"+item["IP_CART_Sid"])
+                            .addClass("cartItem");
+
+        if (half) {
+            div.append( item_half_content(items[i]) );
+            content.append(div);
+            continue;
+        }
+
+        var price    = parseInt(item["KAKAKU"]);
+		// > ADD
+		// SET_PRICE要素がセットされている場合はそちらがセットの合計価格
+		price = item["SET_PRICE"] ? item["SET_PRICE"] : price;
+		// < ADD
+        var toppings = [];
+        for (var j in item["TOPPINGS"]) {
+            toppings.push(item["TOPPINGS"][j]["SHOHIN_NM"]);
+            price += parseInt(item["TOPPINGS"][j]["KAKAKU"]);
+        }
+        price *= item["COUNT"];
+		
+		// > ADD
+        var setSubs = [];
+        for (var j in item["SUBS"]) {
+            setSubs.push(item["SUBS"][j]["SHOHIN_NM"]);
+        }
+		// < ADD
+
+        // item image
+        div.append(
+            $("<div>").addClass("itemImage").append(
+                $("<div>").addClass("photo").append(
+                    $("<img>").attr("src", service_get_uri+"/images/s/"+item["SHOHIN_C"]+".jpg") // TODO
+                              .attr("alt", "商品名")
+                              .attr("width", 76)
+                              .attr("height", 53)
+                )
+            )
+        );
+
+        if (mode == "index") {      // カートインデックスでは削除ボタンをつける
+            $(".photo", div).first().after(
+            $("<div>").addClass("favorite").append(
+                $("<a>").attr("href", "remove#remove:" + item["IP_CART_Sid"]).append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/button_delete.png")
+                          .attr("alt", "オーダーから消す")
+                          .attr("width", 78)
+                          .attr("height", 30)
+                )
+            ));
+        }
+
+		// > ADD
+        if (setSubs.length && item["SET_SIDE_ITEM"] && !(item["SIZE_NM"] || item["CRUST_NM"]))
+        {
+			// サブランチ
+			if (item["SET_DRINK_ITEM"]) {
+				// サブランチドリンクセット
+				price = parseInt(price) + ((parseInt(item["SET_DRINK_ITEM"]["KAKAKU"]) - 110) * item["COUNT"]);
+				
+				if(setSubs.length == 3)
+				{
+				
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ3個目").after(
+								$("<td>").addClass("caption").text(setSubs[2])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("ドリンク").after(
+								$("<td>").addClass("caption").text(item["SET_DRINK_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+				}else
+				{
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("ドリンク").after(
+								$("<td>").addClass("caption").text(item["SET_DRINK_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+				}
+			} else {
+				// サブランチドリンクなし
+				if(setSubs.length == 3)
+				{
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ3個目").after(
+								$("<td>").addClass("caption").text(setSubs[2])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+				}else
+				{
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+				}
+			}		
+        }else
+		// < ADD
+		if (item["SET_SIDE_ITEM"] && item["SET_DRINK_ITEM"]) {
+            price = parseInt(price) + ((parseInt(item["SET_DRINK_ITEM"]["KAKAKU"]) - 110) * item["COUNT"]);
+
+			if(setSubs.length){
+				// ピザサブランチドリンクセット
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サイズ").after(
+								$("<td>").addClass("caption").text(item["SIZE_NM"]))
+							).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("生地").after(
+								$("<td>").addClass("caption").text(item["CRUST_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("トッピング").after(
+								$("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("ドリンク").after(
+								$("<td>").addClass("caption").text(item["SET_DRINK_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+			}else{
+				// ピザランチドリンクセット
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サイズ").after(
+								$("<td>").addClass("caption").text(item["SIZE_NM"]))
+							).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("生地").after(
+								$("<td>").addClass("caption").text(item["CRUST_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("トッピング").after(
+								$("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("ドリンク").after(
+								$("<td>").addClass("caption").text(item["SET_DRINK_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+			}
+        }
+        else if (item["SET_SIDE_ITEM"] != null) {
+			if(setSubs.length){
+				// ピザサブランチドリンクなし
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サイズ").after(
+								$("<td>").addClass("caption").text(item["SIZE_NM"]))
+							).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("生地").after(
+								$("<td>").addClass("caption").text(item["CRUST_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("トッピング").after(
+								$("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ1個目").after(
+								$("<td>").addClass("caption").text(setSubs[0])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サブ2個目").after(
+								$("<td>").addClass("caption").text(setSubs[1])
+							))).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+			}else{
+				// ピザランチドリンクなし
+				div.append(
+					$("<div>").addClass("itemInfo clearfix").append(
+						$("<p>").addClass("item_name").append(
+							$("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+						).after(
+						$("<table>").attr("border", "0")
+									.attr("cellspacing", "0").attr("width", "100%").append(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("サイズ").after(
+								$("<td>").addClass("caption").text(item["SIZE_NM"]))
+							).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("生地").after(
+								$("<td>").addClass("caption").text(item["CRUST_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("トッピング").after(
+								$("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("セット").after(
+								$("<td>").addClass("caption").text(item["SET_SIDE_ITEM"]["SHOHIN_NM"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("head").text("個数").after(
+								$("<td>").addClass("caption").text(item["COUNT"]))
+							)).after(
+							$("<tr>").append(
+								$("<td>").addClass("caption price").html("&nbsp;").after(
+								$("<td>").addClass("caption price").text("￥" + price))
+							))
+						))
+					)
+				);
+			}
+        } else if(item["SETONEPIECE_ITEM_C"] != null){
+			div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name").append(
+                        $("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("サイズ").after(
+                            $("<td>").addClass("caption").text(item["SIZE_NM"]))
+                        ).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("生地").after(
+                            $("<td>").addClass("caption").text(item["CRUST_NM"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("トッピング").after(
+                            $("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text(item["SET_NAME"]).after(
+							$("<td>").addClass("caption").text("あり"))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("個数").after(
+                            $("<td>").addClass("caption").text(item["COUNT"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    ))
+                )
+            );
+		} else{
+            div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name").append(
+                        $("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("サイズ").after(
+                            $("<td>").addClass("caption").text(item["SIZE_NM"]))
+                        ).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("生地").after(
+                            $("<td>").addClass("caption").text(item["CRUST_NM"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("トッピング").after(
+                            $("<td>").addClass("caption").text(toppings.join(",") || "なし"))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("個数").after(
+                            $("<td>").addClass("caption").text(item["COUNT"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    ))
+                )
+            );
+        }
+
+        content.append(div);
+    }
+
+    return content;
+}
+
+function item_side_content(items) {
+    var content = $("<div>");
+
+    for (var i in items) {
+        var item = items[i];
+        var half;
+
+        if (item instanceof Array) {
+            half = item[1];
+            item = item[0];
+        }
+
+        var div = $("<div>").attr("id", "item_"+item["IP_CART_Sid"])
+                            .addClass("cartItem");
+
+        if (half) {
+            div.append( item_half_content(items[i]) );
+            content.append(div);
+            continue;
+        }
+
+        var price    = parseInt(item["KAKAKU"]);
+        var toppings = [];
+        for (var j in item["TOPPINGS"]) {
+            toppings.push(item["TOPPINGS"][j]["SHOHIN_NM"]);
+            price += parseInt(item["TOPPINGS"][j]["KAKAKU"]);
+        }
+        price *= item["COUNT"];
+    	
+        div.append(
+            $("<div>").addClass("itemImage").append(
+                $("<div>").addClass("photo").append(
+                    $("<img>").attr("src", service_get_uri+"/images/s/"+item["SHOHIN_C"]+".jpg") // TODO
+                              .attr("alt", "商品名")
+                              .attr("width", 76)
+                              .attr("height", 53)
+                )
+            )
+        );
+        
+        if (mode == "index") {      // カートインデックスでは削除ボタンをつける
+            $(".photo", div).first().after(
+            $("<div>").addClass("favorite").append(
+                $("<a>").attr("href", "remove#remove:" + item["IP_CART_Sid"]).append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/button_delete.png")
+                          .attr("alt", "オーダーから消す")
+                          .attr("width", 78)
+                          .attr("height", 30)
+                )
+            ));
+        }
+        
+		if (item["SET_DRINK_ITEM"] != null) {
+			// > ADD 旧サイドドリンクセットは親レコードがセット価格を保持
+			if(item["GROUP_C"] != 9){
+				price = parseInt(price) + ((parseInt(item["SET_DRINK_ITEM"]["KAKAKU"]) - 110) * item["COUNT"]);
+			}
+			// < ADD
+
+            div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name").append(
+                        $("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("セット").after(
+                            $("<td>").addClass("caption").text(item["SET_DRINK_ITEM"]["SHOHIN_NM"]))
+                        ).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("個数").after(
+                            $("<td>").addClass("caption").text(item["COUNT"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    ))
+                )
+            );
+        } else {
+            div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name").append(
+                        $("<a>").attr("href", "detail#detail:"+item["IP_CART_Sid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("個数").after(
+                            $("<td>").addClass("caption").text(item["COUNT"]))
+                        ).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    ))
+                )
+            );
+        }
+           
+        content.append(div);
+    }
+
+    return content;
+}
+
+function item_half_content(items) {
+    var div   = $("<div>");
+    var item1 = items[0];
+    var item2 = items[1];
+
+    var price1 = parseInt(item1["KAKAKU"]);
+    var toppings1 = [];
+    for (var j in item1["TOPPINGS"]) {
+        toppings1.push(item1["TOPPINGS"][j]["SHOHIN_NM"]);
+        price1 += parseInt(item1["TOPPINGS"][j]["KAKAKU"]);
+    }
+    price1 *= item1["COUNT"];
+    price1 /= 2;
+
+    var price2 = parseInt(item2["KAKAKU"]);
+    var toppings2 = [];
+    for (var j in item2["TOPPINGS"]) {
+        toppings2.push(item2["TOPPINGS"][j]["SHOHIN_NM"]);
+        price2 += parseInt(item2["TOPPINGS"][j]["KAKAKU"]);
+    }
+    price2 *= item2["COUNT"];
+    price2 /= 2;
+
+
+    // image1
+    div.append(
+        $("<div>").addClass("itemImage").append(
+            $("<div>").addClass("half_icon").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/half_icon.png")
+                          .attr("width", 79)
+                          .attr("height", 10)
+            ).after(
+            $("<div>").addClass("photo").append(
+                $("<img>").attr("src", service_get_uri+"/images/s/"+item1["SHOHIN_C"]+".jpg") // TODO
+                          .attr("alt", "商品名")
+                          .attr("width", 76)
+                          .attr("height", 53)
+            ))
+        )
+    );
+
+    // topping1
+    div.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<p>").addClass("item_name").append(
+                $("<a>").attr("href",
+                              "detail#detailhalf:"+item1["IP_CART_Sid"]+":left").text(item1["SHOHIN_NM"])
+            ).after(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("トッピング").after(
+                    $("<td>").addClass("caption").text(toppings1.join(",") || "なし"))
+                )
+            ))
+        )
+    );
+
+    // image2
+    div.append(
+        $("<div>").addClass("itemImage").append(
+            $("<div>").addClass("half_icon").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/half_icon.png")
+                          .attr("width", 78)
+                          .attr("height", 9)
+            ).after(
+            $("<div>").addClass("photo").append(
+                $("<img>").attr("src", service_get_uri+"/images/s/"+item2["SHOHIN_C"]+".jpg") // TODO
+                          .attr("alt", "商品名")
+                          .attr("width", 76)
+                          .attr("height", 53)
+            ))
+        )
+    );
+    if (mode == "index") {      // カートインデックスでは削除ボタンをつける
+        $(".photo", div).last().after(
+        $("<div>").addClass("favorite").append(
+            $("<a>").attr("href", "remove#remove:" + item1["IP_CART_Sid"]).append(
+            $("<img>").attr("src", "{{bundlepath}}/cart/img/button_delete.png")
+                      .attr("alt", "オーダーから消す")
+                      .attr("width", 78)
+                      .attr("height", 30)
+            )
+        ));
+    }
+
+    // topping2
+    div.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<p>").addClass("item_name").append(
+                $("<a>").attr("href", "detail#detailhalf:"+item1["IP_CART_Sid"]+":right").text(item2["SHOHIN_NM"])
+            ).after(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("トッピング").after(
+                    $("<td>").addClass("caption").text(toppings2.join(",") || "なし"))
+                )
+            ))
+        )
+    );
+	
+	if(item1["SETONEPIECE_ITEM_C"] != null)
+	{
+		var setPrice = item1["SET_ONLY_PRICE"];
+        setPrice *= item1["COUNT"];
+		div.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("サイズ").after(
+                    $("<td>").addClass("caption").text(item1["SIZE_NM"]))
+                ).after(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("生地").after(
+                    $("<td>").addClass("caption").text(item1["CRUST_NM"]))
+                )).after(
+                    $("<tr>").append(
+                    $("<td>").addClass("head").text(item1["SET_NAME"]).after(
+					$("<td>").addClass("caption").text("あり"))
+				)).after(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("個数").after(
+                    $("<td>").addClass("caption").text(item1["COUNT"]))
+                )).after(
+                $("<tr>").append(
+                    $("<td>").addClass("caption price").html("&nbsp;").after(
+                    $("<td>").addClass("caption price").text("￥" + (parseInt(price1) + parseInt(price2) + parseInt(setPrice))))
+                ))
+            )
+        )
+    );
+	}else
+	{
+		div.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("サイズ").after(
+                    $("<td>").addClass("caption").text(item1["SIZE_NM"]))
+                ).after(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("生地").after(
+                    $("<td>").addClass("caption").text(item1["CRUST_NM"]))
+                )).after(
+                $("<tr>").append(
+                    $("<td>").addClass("head").text("個数").after(
+                    $("<td>").addClass("caption").text(item1["COUNT"]))
+                )).after(
+                $("<tr>").append(
+                    $("<td>").addClass("caption price").html("&nbsp;").after(
+                    $("<td>").addClass("caption price").text("￥" + (parseInt(price1) + parseInt(price2))))
+                ))
+            )
+        )
+    );
+	}
+
+    return div.html();
+}
+
+function coupon_content(coupons) {
+    var content = $("<div>");
+    for (var i in coupons) {
+        var item = coupons[i];
+
+        var price;
+        if (item["NEBIKI_RITSU"]) {
+            price =
+                item["NEBIKI_RITSU"]
+                + "% OFF (￥-"
+                + Math.ceil(parseInt(priceAndTax["gokeiWithoutCoupon"]) * parseInt(item["NEBIKI_RITSU"]) / 100)
+                + ")";
+        }
+        else if (item["NEBIKI_GAKU"]) {
+            price = "￥" + item["NEBIKI_GAKU"] + " OFF";
+        }
+        else {
+            price = "-";
+        }
+
+        content.append(
+            $("<div>").addClass("itemInfo clearfix").append(
+                $("<p>").text(item["COUPON_NM"]).after(
+                $("<table>").attr("border", "0")
+                            .attr("cellspacing", "0").attr("width", "100%").append(
+                    $("<tr>").append(
+                        $("<td>").attr("colspan", "0").attr("align","center").addClass("caption price").text(price)
+                    )
+                ))
+            )
+        );
+    }
+
+    return content;
+}
+
+function item_recommend_content(items) {
+    var content = $("<div>");
+
+    for (var i in items) {
+        var item = items[i];
+        
+        if (item instanceof Array) {
+            item = item[0];
+        }
+
+        var div = $("<div>").addClass("cartItem");
+
+        var price    = parseInt(item["KAKAKU"]);
+
+        // item image
+        div.append(
+            $("<div>").addClass("itemImage").append(
+                $("<div>").addClass("photo").append(
+                $("<a>").attr("href", "detail#recommend_detail:"+item["IP_RECOMMEND_Tid"]).append(
+                    $("<img>").attr("src", service_get_uri+"/images/s/"+item["SHOHIN_C"]+".jpg") // TODO
+                              .attr("alt", "商品名")
+                              .attr("width", 76)
+                              .attr("height", 53)
+                )
+            )
+        ));
+
+		if (item["CATEGORY_C"] == 1 || item["CATEGORY_C"] == 2) {
+            div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name_link").append(
+                        $("<a>").attr("href", "detail#recommend_detail:"+item["IP_RECOMMEND_Tid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("サイズ").after(
+                            $("<td>").addClass("caption").text(item["SIZE_NM"]))
+                        ).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("head").text("生地").after(
+                            $("<td>").addClass("caption").text(item["CRUST_NM"]))
+                        )).after(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    ))
+                )
+            );
+        } else {
+            div.append(
+                $("<div>").addClass("itemInfo clearfix").append(
+                    $("<p>").addClass("item_name_link").append(
+                        $("<a>").attr("href", "detail#recommend_detail:"+item["IP_RECOMMEND_Tid"]).text(item["SHOHIN_NM"])
+                    ).after(
+                    $("<table>").attr("border", "0")
+                                .attr("cellspacing", "0").attr("width", "100%").append(
+                        $("<tr>").append(
+                            $("<td>").addClass("caption price").html("&nbsp;").after(
+                            $("<td>").addClass("caption price").text("￥" + price))
+                        ))
+                    )
+                )
+            );
+        }
+
+        content.append(div);
+    }
+
+    return content;
+}
+
+function render() {
+    // ピザ
+    if (items["pizza"].length) {
+        var pizza_div = $("<div>").addClass("pizza cartGroup");
+        pizza_div.append( item_header({ title:"ピザ", img:"{{bundlepath}}/cart/img/cart_title_1.png" }) );
+        pizza_div.append( item_content(items["pizza"]) );
+		//>> for onepiece
+		if (items["onepieceset"].length) {
+			pizza_div.append( item_content(items["onepieceset"]));
+		}
+		//<< for onepiece
+		cart.append(pizza_div);
+    }//>> for onepiece
+	else if (items["onepieceset"].length) {
+		var onepiece_div = $("<div>").addClass("onepiece cartGroup");
+		onepiece_div.append( item_header({ title:"ピザ", img:"{{bundlepath}}/cart/img/cart_title_1.png" }) );
+		onepiece_div.append( item_content(items["onepieceset"]));
+		cart.append(onepiece_div);
+	}
+	//<< for onepiece
+    
+    if (items["setmenu"].length) {
+        var set_div = $("<div>").addClass("set cartGroup");
+        set_div.append( item_header({ title:"ランチセット", img:"{{bundlepath}}/cart/img/cart_title_3.png" }) );
+        set_div.append( item_content(items["setmenu"]) );
+        cart.append(set_div);
+    }
+    
+    if (items["drinkset"].length) {
+        var set_div = $("<div>").addClass("set cartGroup");
+        set_div.append( item_header({ title:"ドリンクセット", img:"{{bundlepath}}/cart/img/cart_title_4.png" }) );
+        set_div.append( item_side_content(items["drinkset"]) );
+        cart.append(set_div);
+    }
+
+    // パスタ・リゾット＆サブ
+    if (items["pasta"].length) {
+        var pasta_div = $("<div>").addClass("pasta cartGroup");
+        pasta_div.append(
+            item_header({ title:"パスタ・リゾット＆サブ", img:"{{bundlepath}}/cart/img/menu_icon_pastasub.png" }));
+        pasta_div.append( item_side_content(items["pasta"]) );
+        cart.append(pasta_div);
+    }
+
+    // サイドメニュー
+    if (items["sidemenu"].length) {
+        var side_div = $("<div>").addClass("side cartGroup");
+        side_div.append(
+            item_header({ title:"サイドメニュー", img:"{{bundlepath}}/cart/img/menu_icon_side.png" })
+        );
+        side_div.append( item_side_content(items["sidemenu"]) );
+        cart.append(side_div);
+    }
+
+    // クーポン
+//    var coupons = [{"COUPON_NM":"オンラインクーポン", "NEBIKI_RITSU":"5"}];
+    var coupons = [];
+    if (items["coupons"] && items["coupons"].length) {
+        coupons = coupons.concat(items["coupons"]);
+    }
+    cart.append( item_header({ title:"クーポン", img:"{{bundlepath}}/cart/img/menu_icon_coupon.png" }) );
+    cart.append( coupon_content( coupons ) );
+
+    if (mode == "index") {
+        cart.append(
+            $("<div>").addClass("btn2").append(
+                $("<a>").attr("href", "coupon#coupon").append(
+                    $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_coupon_icon.png")
+                              .attr("alt", "クーポンを追加する")
+                              .attr("width", "281")
+                              .attr("height", "46")
+                )
+            )
+        );
+    }
+
+
+    // 合計金額
+    cart.append( item_header({ title:"お会計", img:"{{bundlepath}}/cart/img/menu_icon_total.png" }) );
+    cart.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<div>").addClass("monetary_amount").text("合計").after(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").attr("colspan", "0").attr("align","center").addClass("caption price").text("￥" + priceAndTax["gokei"])                )
+            ))
+        )
+    );
+    cart.append(
+        $("<div>").addClass("itemInfo clearfix").append(
+            $("<div>").addClass("monetary_tax").text("うち消費税").after(
+            $("<table>").attr("border", "0")
+                        .attr("cellspacing", "0").attr("width", "100%").append(
+                $("<tr>").append(
+                    $("<td>").attr("colspan", "0").attr("align","center").addClass("caption price").text("￥" + priceAndTax["syohizei"])
+                )
+            ))
+        )
+    );
+    cart.append(
+        $("<div>").addClass("cart_alert").append(
+            $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_alert1.png")
+                      .attr("alt", "confirm").attr("width", "286").attr("height", "15")
+        )
+    );
+	
+    // > ADD v3.10
+    // お支払方法
+	var creditText;
+	cart.append($("<a>").attr("name", "payment"));
+    cart.append( item_header({ title:"お支払い方法", img:"{{bundlepath}}/cart/img/yenmark_icn.png" }) );
+    if (creditInfo == null) {
+		creditText = "選択してください";
+    }
+    else if (creditInfo["type_name"] == "cash") {
+		creditText = "現金";
+    }    
+    else if (creditInfo["type_name"] && creditInfo["id_hidden"]) {
+		creditText = "クレジットカード";
+    }
+    else {
+		creditText = "選択してください";
+    }
+    if (mode == "index") {
+		if (creditText == "クレジットカード") {
+			cart.append(
+				$("<div>").addClass("itemInfo clearfix").append(
+				$("<a>").attr("href", "payment_type#payment_type").append(
+					$("<div>").addClass("payment_type_credit_link").text(creditText).after(
+					$("<table>").attr("border", "0")
+	                        .attr("cellspacing", "0").attr("width", "100%").append(
+	                $("<tr>").append(
+							$("<td>").attr("colspan", "0").attr("align","center").addClass("caption price").text(creditInfo["type_name"] + " " + creditInfo["id_hidden"])                )
+					))
+				))
+			);
+			// スペース
+			cart.append($("<div>").addClass("payment_type_space").text(" "));
+		}
+		else if (creditText == "現金" && creditInfo["credit_k"] == "0") {
+			// クレジット選択不可
+			cart.append(
+				$("<div>").addClass("itemInfo clearfix").append(
+					$("<div>").addClass("payment_type").text(creditText)
+				)
+			);
+		}
+		else {
+			cart.append(
+				$("<div>").addClass("itemInfo clearfix").append(
+				$("<a>").attr("href", "payment_type#payment_type").append(
+					$("<div>").addClass("payment_type_link").text(creditText)
+				))
+			);
+		}
+	}
+	// 注文確定画面
+	else {
+		if (creditText == "クレジットカード") {
+			cart.append(
+				$("<div>").addClass("itemInfo clearfix").append(
+					$("<div>").addClass("payment_type_credit").text(creditText).after(
+					$("<table>").attr("border", "0")
+	                        .attr("cellspacing", "0").attr("width", "100%").append(
+	                $("<tr>").append(
+							$("<td>").attr("colspan", "0").attr("align","center").addClass("caption price").text(creditInfo["type_name"] + " " + creditInfo["id_hidden"])                )
+					))
+				)
+			);
+			// スペース
+			cart.append($("<div>").addClass("payment_type_space").text(" "));
+		}
+		else {
+			cart.append(
+				$("<div>").addClass("itemInfo clearfix").append(
+					$("<div>").addClass("payment_type").text(creditText)
+				)
+			);
+		}
+	}
+    // < ADD v3.10
+	
+
+    // カートインデックスではメニューへのリンクを表示
+    if (mode == "index") {
+        cart.append(
+            $("<div>").addClass("btn").append(
+                $("<a>").attr("href", "menu#menu").append(
+                    $("<img>").attr("src", "{{bundlepath}}/cart/img/button_add.png")
+                              .attr("alt", "メニューを追加する")
+                              .attr("width", "281")
+                              .attr("height", "46")
+                )
+            ).after(
+            $("<div>").addClass("btn").append(
+                $("<a>").attr("href", "sidemenu#sidemenu").append(
+                    $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_button_sideadd.png")
+                              .attr("alt", "サイドメニューを追加する")
+                              .attr("width", "281")
+                              .attr("height", "46")
+                )
+            )).after(
+            $("<p>").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_tag_menu.png"))
+            )
+        );
+        
+        // おすすめメニュー
+        if (items["recommends"].length) {
+            var recommend_div = $("<div>").addClass("pizza cartGroup");
+            recommend_div.append( item_recommend_content(items["recommends"]) );
+            cart.append(recommend_div);
+        }
+            
+        cart.append(
+            $("<div>").attr("id", "confirm").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/confirm.png")
+                          .attr("alt", "confirm").attr("width", "290").attr("height", "15").after(
+                $("<ul>").append(
+                    $("<li>").append(
+                        $("<a>").attr("href", "goriyo#goriyo").html('ご利用にあたって<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="9" height="14" class="nextbtn">')
+                    ).after(
+                    $("<li>").append(
+                        $("<a>").attr("href", "privacy#privacy").html('プライバシーポリシー<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="9" height="14" class="nextbtn">')
+                    )).after(
+                    $("<li>").append(
+                        $("<a>").attr("href", "sitepolicy#sitepolicy").html('ご利用規約<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="9" height="14" class="nextbtn">')
+                    )).after(
+                    $("<li>").append(
+                        $("<a>").attr("href", "guideline#guideline").html('特定商取引法に基づく表示<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="9" height="14" class="nextbtn">')
+                    ))
+                ))
+            )
+        );
+    }
+    // 確認画面ではお届け先住所を表示
+    else if (mode == "confirm") {
+        cart.append(
+            $("<p>").attr("id", "favorite_button").addClass("btn").append(
+                $("<a>").attr("href", "favorite#favorite").append(
+                    $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_button_favorite.png")
+                              .attr("width", "281").attr("height", "46")
+                )
+            )
+        );
+
+        cart.append(
+            $("<p>").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/menu_tag_address.png")
+            ).after(
+            $("<p>").addClass("delivery_address").text( items["address"]["jushoFull"] )).after(
+            $("<p>").addClass("delivery_address").text( items["kokyakuNm"] + " 様" )).after(
+            $("<p>").addClass("delivery_address").text( items["tel"]["telNo"] )).after(
+            $("<p>").addClass("delivery_address").text( "配達店舗： ドミノ・ピザ " + items["address"]["tenpoNm"] + " 店" )).after(
+            $("<p>").addClass("delivery_address").addClass("deliveryTime").html( "ただいまのお届け時間： <img src=\"{{bundlepath}}/cart/img/loadinfo.gif\"/>")).after(
+            $("<p>").addClass("delivery_address").addClass("changeDeliveryTime").html( "配達予定時間： <img src=\"{{bundlepath}}/cart/img/loadinfo.gif\"/>")).after(
+            $("<div>").attr("id", "confirm").append(
+                $("<img>").attr("src", "{{bundlepath}}/cart/img/confirm.png")
+                          .attr("alt", "confirm").attr("width", "290").attr("height", "15").after(
+                $("<ul>").append(
+                    $("<li>").append(
+                        $("<a>").attr("href", "goriyo#goriyo").html('ご利用にあたって<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="11" height="16" class="nextbtn">')
+                    ).after(
+                        $("<a>").attr("href", "privacy#privacy").html('プライバシーポリシー<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="11" height="16" class="nextbtn">')
+                    ).after(
+                    $("<li>").append(
+                        $("<a>").attr("href", "sitepolicy#sitepolicy").html('ご利用規約<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="11" height="16" class="nextbtn">')
+                    )).after(
+                    $("<li>").append(
+                        $("<a>").attr("href", "guideline#guideline").html('特定商取引法に基づく表示<img src="{{bundlepath}}/cart/img/cart_next.png" alt="cart_next" width="11" height="16" class="nextbtn">')
+                    ))
+                ))
+            ))
+        );
+    }
+
+//    alert( $("#cart").html() );
+
+    if ($(".cartItem", cart).size() == 0) {
+        $("#zero_notice").show();
+        $("#cart").hide();
+    }
+
+    // 確認画面では詳細に飛べないように（インデックスでも詳細には飛ばない＜カート編集機能の実装待ち）
+    if (mode == "confirm" || mode == "index") {
+        $("#cart p.item_name a").removeAttr("href");
+        $("#cart p.item_name").removeClass("item_name");
+    }
+
+    location.hash = "rendered";
+}
+
+// objcから呼ばれる関数ども
+function removeItem(id) {
+    var elem = $("#item_"+id);
+    var parent = elem.parents(".cartGroup");
+
+    if (elem.length) {
+        //$(elem).slideUp();
+        $(elem).fadeOut();
+        $(elem).remove();
+    }
+
+    // 同じカテゴリアイテムが全部ない場合はヘッダーも消す
+    if ($(".cartItem", parent).size() == 0) {
+        parent.remove();
+    }
+
+    // カートに商品が空になったら0件表示に
+    if ($(".cartItem", cart).size() == 0) {
+        $("#zero_notice").show();
+        $("#cart").hide();
+    }
+}
+
+function updatePrices(priceAndTax) {
+//    alert(priceAndTax["gokei"]);
+//    alert(priceAndTax["syohizei"]);
+    $("#gokei").text("￥"+priceAndTax["gokei"]);
+    $("#syoukei").text("￥"+priceAndTax["syoukei"]);
+    $("#online_coupon").text( Math.ceil(priceAndTax["gokeiWithoutCoupon"] * 0.05) );
+}
+
+function favoriteCallback() {
+    $("#favorite_button").empty();
+    $("#favorite_button").append(
+        $("<img>").attr("src", "{{bundlepath}}/cart/img/cart_button_favorite2.png")
+                              .attr("align","center")
+                              .attr("width", "281").attr("height", "46")
+    );
+}
+
+function setDeliveryTime(timeString) {
+    if (timeString) {
+        items["deliveryTime"] = timeString;
+        $(".deliveryTime").text("ただいまのお届け時間： " + timeString);
+    } else {
+        $(".deliveryTime").empty();
+    }
+}
+
+function setChangeDeliveryTime(timeString) {
+    if (timeString) {
+        items["changeDeliveryTime"] = timeString;
+        $(".changeDeliveryTime").text("配達予定時間： " + timeString);
+    } else {
+        $(".changeDeliveryTime").empty();
+    }
+}
+
+function reload(json) {
+    $("#cart").show();
+    $("#zero_notice").hide();
+
+    items = json;
+    mode = items["mode"] || "index";
+    priceAndTax = items["priceAndTax"];
+    cart.empty();
+    render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>

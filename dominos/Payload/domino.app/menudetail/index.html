@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>domino</title>
+<link rel="stylesheet" href="base.css" type="text/css">
+<script type="text/javascript">
+function OnLoad()
+{
+    document.documentElement.style.webkitTouchCallout = "none";
+    document.documentElement.style.webkitUserSelect = "none";
+}
+</script>
+</head>
+<body onload="OnLoad()"/>
+
+<div class="container">
+<div class="item-frame">
+    <div class="pizza-image" id="photo">$photo</div>
+<!-- /.item-frame --></div>
+
+<div class="item-name" id="name">$name</div>
+<div class="price">$html_fragment_for_price</div>
+
+<div class="item-frame">
+    <div class="title"><img src="img/menu_tag_info.png" alt="Information"></div>
+    <div class="item-inner">
+        <div class="comment">$comment</div>
+        <div class="menu-list">
+
+            $html_fragment_for_pizza
+            $html_fragment_for_setmenu
+            $html_fragment_for_onepiece
+
+            <div class="item link">
+                <a href="dominospizza:function:selectPieces">
+                    <span class="head">個数をえらぶ</span>
+                    <span class="data" id="count">$count</span>
+                </a>
+            </div>
+        <!-- /.menu-list --></div>
+    <!-- /.item-inner --></div>
+<!-- /.item-frame --></div>
+
+<div class="button">
+    <a href="dominospizza:function:addToCart"><img src="img/menu_button_cart.png" alt="カートに入れる"></a>
+</div>
+
+<div class="taketime">
+    <img src="img/taketime.png" width="254" height="15" />
+</div>
+
+<!-- /.container --></div>
+</body>
+</html>
